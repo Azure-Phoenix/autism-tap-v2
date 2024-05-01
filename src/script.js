@@ -38,53 +38,53 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 // camera
-const camera = new THREE.PerspectiveCamera(
-  60,
-  window.innerWidth / 2 / window.innerHeight,
-  0.1,
+// const camera = new THREE.PerspectiveCamera(
+//   60,
+//   window.innerWidth / 2 / window.innerHeight,
+//   0.1,
+//   1000
+// )
+// camera.position.set(1.6, 1, -1)
+// camera.lookAt(0.2, 0.1, 0)
+// scene.add(camera)
+
+const size = 2
+const cameraWidth = (size * window.innerWidth) / window.innerHeight / 2
+const cameraHeight = size / 2
+
+const camera = new THREE.OrthographicCamera(
+  -cameraWidth / 2,
+  cameraWidth / 2,
+  cameraHeight,
+  -cameraHeight,
+  1,
   1000
 )
-camera.position.set(1.6, 1, -1)
+camera.position.set(2, 1.5, 0)
 camera.lookAt(0.2, 0.1, 0)
 scene.add(camera)
 
-// const size = 1.7
-// const cameraWidth = (size * window.innerWidth) / window.innerHeight / 2
-// const cameraHeight = size / 2
-
-// const camera = new THREE.OrthographicCamera(
-//   -cameraWidth / 2,
-//   cameraWidth / 2,
-//   cameraHeight,
-//   -cameraHeight,
-//   1,
+// const camera1 = new THREE.PerspectiveCamera(
+//   60,
+//   window.innerWidth / 2 / window.innerHeight,
+//   0.1,
 //   1000
 // )
-// camera.position.set(0, 1.5, 1.5)
-// camera.lookAt(0, 0, -0.5)
-// scene.add(camera)
+// camera1.position.set(1.6, 1, -1)
+// camera1.lookAt(0.2, 0.1, 0)
+// scene1.add(camera1)
 
-const camera1 = new THREE.PerspectiveCamera(
-  60,
-  window.innerWidth / 2 / window.innerHeight,
-  0.1,
+const camera1 = new THREE.OrthographicCamera(
+  -cameraWidth / 2,
+  cameraWidth / 2,
+  cameraHeight,
+  -cameraHeight,
+  1,
   1000
 )
-camera1.position.set(1.6, 1, -1)
+camera1.position.set(2, 1.5, 0)
 camera1.lookAt(0.2, 0.1, 0)
 scene1.add(camera1)
-
-// const camera1 = new THREE.OrthographicCamera(
-//   -cameraWidth / 2,
-//   cameraWidth / 2,
-//   cameraHeight,
-//   -cameraHeight,
-//   1,
-//   1000
-// )
-// camera1.position.set(0, 1.5, 1.5)
-// camera1.lookAt(0, 0, -0.5)
-// scene1.add(camera1)
 
 /**
  * Addition
@@ -595,12 +595,40 @@ window.addEventListener("touchend", (event) => {
   if (intersects.length > 0) {
     let pointedObject = intersects[0].object
     if (pointedObject.name === "Hidden_end" && isInteractAvailable && isCorrectStart) {
+      promptLimit = 0
       isUserInteracted = true
       isInteractAvailable = false
       hidePrompt()
       tada()
       playAnim(1, `step${step}`)
       step++
+      if (step == 4) {
+        setTimeout(() => {
+          refresh()
+        }, 5000)
+      }
+      setTimeout(() => {
+        console.log(step)
+        playAnim(0, `change${step - 1}`)
+        playAnim(1, `change${step - 1}`)
+        if (step == 2) {
+          setTimeout(() => {
+            audio.play()
+            playAnim(0, `step${step}`)
+            setTimeout(() => {
+              prompt()
+            }, 3000)
+          }, 2000)
+        } else if (step == 3) {
+          setTimeout(() => {
+            audio.play()
+            playAnim(0, `step${step}`)
+            setTimeout(() => {
+              prompt()
+            }, 3000)
+          }, 2000)
+        }
+      }, 3500)
     }
   }
   isCorrectStart = false
@@ -608,24 +636,24 @@ window.addEventListener("touchend", (event) => {
 
 // Auto Resize
 window.addEventListener("resize", () => {
-  // const newAspect = window.innerWidth / 2 / window.innerHeight
+  const newAspect = window.innerWidth / 2 / window.innerHeight
 
-  // camera.left = (size * newAspect) / -2
-  // camera.right = (size * newAspect) / 2
+  camera.left = (size * newAspect) / -2
+  camera.right = (size * newAspect) / 2
 
-  // camera.updateProjectionMatrix()
-
-  // camera1.left = (size * newAspect) / -2
-  // camera1.right = (size * newAspect) / 2
-
-  // camera1.updateProjectionMatrix()
-
-  // Update camera
-  camera.aspect = window.innerWidth / window.innerHeight / 2
   camera.updateProjectionMatrix()
 
-  camera1.aspect = window.innerWidth / window.innerHeight / 2
+  camera1.left = (size * newAspect) / -2
+  camera1.right = (size * newAspect) / 2
+
   camera1.updateProjectionMatrix()
+
+  // Update camera
+  // camera.aspect = window.innerWidth / window.innerHeight / 2
+  // camera.updateProjectionMatrix()
+
+  // camera1.aspect = window.innerWidth / window.innerHeight / 2
+  // camera1.updateProjectionMatrix()
 
   // Update renderer
   renderer.setSize(window.innerWidth, window.innerHeight)
